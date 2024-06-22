@@ -18,10 +18,16 @@ class FileUploaderApp:
         self.root.title("File Uploader")
         self.root.geometry("600x400")
 
-        self.upload_button = ttk.Button(root, text="Upload File", command=self.upload_file)
+        self.photo_upload = tk.PhotoImage(file='C:/Users/Pero/Desktop/Python-projekti/Recompress Comics/Icon/upload.png')
+        self.photo_upload_resized = self.photo_upload.subsample(12,12)
+
+        self.photo_processing = tk.PhotoImage(file='C:/Users/Pero/Desktop/Python-projekti/Recompress Comics/Icon/engineering.png')
+        self.photo_processing_resized = self.photo_processing.subsample(12,12)
+
+        self.upload_button = ttk.Button(root, text="Upload File", command=self.upload_file, image=self.photo_upload_resized)
         self.upload_button.pack(pady=20)
 
-        self.process_button = ttk.Button(root, text="Process File", command=self.process_file)
+        self.process_button = ttk.Button(root, text="Process File", command=self.process_file, image=self.photo_processing_resized)
         self.process_button.pack(pady=10)
 
         self.clear_button = ttk.Button(root, text="Clear Text", command=self.clear_text)
@@ -96,7 +102,7 @@ def detect_cbr_compression(cbr_path):
 
 def extract_cbr_to_folder(cbr_path):
     if not cbr_path.lower().endswith('.cbr'):
-        raise ValueError("The file is not a CBR file.")
+        raise ValueError("The file is not a CBR/CBZ file.")
     
     folder_name = os.path.splitext(os.path.basename(cbr_path))[0] + "-original"    
     output_dir = os.path.join(os.path.dirname(cbr_path), folder_name)
