@@ -49,12 +49,6 @@ class FileUploaderApp:
 
         self.root.bind('<Return>', self.process_file_event)
 
-    def combine_funcs(*funcs):
-        def combined_func(*args, **kwargs):
-            for f in funcs:
-                f(*args, **kwargs)
-            return combined_func
-
     def upload_file(self):
         self.file_paths = filedialog.askopenfilename(multiple=True)
         if self.file_paths:
