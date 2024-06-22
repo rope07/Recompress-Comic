@@ -79,6 +79,7 @@ class FileUploaderApp:
 
     def clear_text(self):
         self.message_text.delete('1.0', tk.END)
+        self.folder_path_label.config(text="No folders selected")
 
     def get_file_path(self):
         return self.file_path
