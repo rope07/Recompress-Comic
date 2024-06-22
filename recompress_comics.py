@@ -47,6 +47,8 @@ class FileUploaderApp:
         self.lock = threading.Lock()
         self.file_queue = queue.Queue()
 
+        self.root.bind('<Return>', self.process_file_event)
+
     def upload_file(self):
         self.file_paths = filedialog.askopenfilename(multiple=True)
         if self.file_paths:
@@ -76,6 +78,9 @@ class FileUploaderApp:
             process_thread.start()
         else:
             self.message_text.insert(tk.END, "Please select a file first.\n")
+
+    def process_file_event(self, event):
+        self.process_file()
 
     def clear_text(self):
         self.message_text.delete('1.0', tk.END)
