@@ -15,7 +15,7 @@ rarfile.UNRAR_TOOL = r"C:/Program Files/WinRAR/UnRAR.exe"
 class FileUploaderApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("File Uploader")
+        self.root.title("Comics Recompressor")
         self.root.geometry("600x400")
 
         self.photo_upload = tk.PhotoImage(file='C:/Users/Pero/Desktop/Python-projekti/Recompress Comics/Icon/upload.png')
