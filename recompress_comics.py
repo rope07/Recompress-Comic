@@ -102,8 +102,8 @@ def detect_cbr_compression(cbr_path):
         return 'unknown'
 
 def extract_cbr_to_folder(cbr_path):
-    if not cbr_path.lower().endswith('.cbr'):
-        raise ValueError("The file is not a CBR file.")
+    if not cbr_path.lower().endswith(('.cbr', '.cbz')):
+        raise ValueError("The file is not a CBR/CBZ file.")
     
     folder_name = os.path.splitext(os.path.basename(cbr_path))[0] + "-original"    
     output_dir = os.path.join(os.path.dirname(cbr_path), folder_name)
