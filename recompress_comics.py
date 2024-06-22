@@ -24,7 +24,7 @@ class FileUploaderApp:
         self.photo_processing = tk.PhotoImage(file='C:/Users/Pero/Desktop/Python-projekti/Recompress Comics/Icon/engineering.png')
         self.photo_processing_resized = self.photo_processing.subsample(12,12)
 
-        self.upload_button = ttk.Button(root, text="Upload Files", command=self.upload_file, image=self.photo_upload_resized)
+        self.upload_button = ttk.Button(root, text="Upload Files", command=self.upload_files, image=self.photo_upload_resized)
         self.upload_button.pack(pady=20)
 
         self.process_button = ttk.Button(root, text="Process Files", command=self.process_file, image=self.photo_processing_resized)
@@ -49,7 +49,7 @@ class FileUploaderApp:
 
         self.root.bind('<Return>', self.process_file_event)
 
-    def upload_file(self):
+    def upload_files(self):
         self.file_paths = filedialog.askopenfilename(multiple=True)
         if self.file_paths:
             self.file_path_label.config(text="\n".join(self.file_paths))
