@@ -148,7 +148,7 @@ def compress_images_in_folder(folder_path, output_folder_path, quality):
         os.makedirs(output_folder_path)
     
     for filename in os.listdir(folder_path):
-        if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
+        if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.webp', '.bmp')):
             image_path = os.path.join(folder_path, filename)
             output_path = os.path.join(output_folder_path, filename)
 
@@ -218,6 +218,7 @@ def work(cbr_file_path, message_text, lock):
     output_folder_path = os.path.join(os.path.dirname(cbr_file_path), output_folder_name)
 
     message_text.insert(tk.END, "Compressing images...\n")
+    
     if has_subfolder(original_folder_path):
         original_subfolder_path = get_subfolder(original_folder_path)
         if has_subfolder(original_subfolder_path):
