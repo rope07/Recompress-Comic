@@ -86,9 +86,12 @@ class FileUploaderApp:
         self.message_text.delete('1.0', tk.END)
         self.file_path_label.config(text="No folders selected")
 
+    def clear_text_upload_button(self):
+        self.message_text.delete('1.0', tk.END)
+
     def upload_and_clear(self):
         self.upload_files()
-        self.clear_text()
+        self.clear_text_upload_button()
     
 def delete_original_folder(folder_path):
     try:
