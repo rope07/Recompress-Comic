@@ -104,6 +104,10 @@ def delete_original_folder(folder_path):
     except Exception as e:
         print(f'Error deleting source folder: {e}')
 
+def delete_cbr_file(cbr_path):
+    os.remove(cbr_path)
+    print(f"Deleted {cbr_path}")
+
 def detect_cbr_compression(cbr_path):
     with open(cbr_path, 'rb') as file:
         file_header = file.read(4)
@@ -134,9 +138,7 @@ def extract_cbr_to_folder(cbr_path):
     else:
         raise ValueError(f"Unknown compression type for file: '{cbr_path}'")
     
-    print(f"Extracted {cbr_path} to {output_dir}")    
-    os.remove(cbr_path)
-    print(f"Deleted {cbr_path}")
+    print(f"Extracted {cbr_path} to {output_dir}")
     return folder_name
 
 def compress_image(image_path, output_path, quality):
@@ -155,8 +157,6 @@ def compress_images_in_folder(folder_path, output_folder_path, quality):
             #print(f'Compressing {image_path}...')
             compress_image(image_path, output_path, quality)
             #print(f'Saved compressed image to {output_path}')
-        else:
-            raise ValueError("The file is not in supported format")
 
 def has_subfolder(folder_path):
     for item in os.listdir(folder_path):
@@ -245,8 +245,10 @@ def work(cbr_file_path, message_text, lock):
     time.sleep(1)
     delete_original_folder(original_folder_path)
 
+    delete_cbr_file(cbr_file_path)
+
     message_text.insert(tk.END, "Compressing folder to CBR file...\n")
-    directory_path = os.path.dirname(cbr_file_path)    
+    directory_path = os.path.dirname(cbr_file_path)  
     compress_folders_in_directory(directory_path, lock)
 
     message_text.insert(tk.END, "Process completed.\n")
