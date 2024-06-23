@@ -220,7 +220,11 @@ def work(cbr_file_path, message_text, lock):
     message_text.insert(tk.END, "Compressing images...\n")
     if has_subfolder(original_folder_path):
         original_subfolder_path = get_subfolder(original_folder_path)
-        compress_images_in_folder(original_subfolder_path, output_folder_path, quality)
+        if has_subfolder(original_subfolder_path):
+            original_subsubfolder_path = get_subfolder(original_subfolder_path)
+            compress_images_in_folder(original_subsubfolder_path, output_folder_path, quality)
+        else:
+            compress_images_in_folder(original_subfolder_path, output_folder_path, quality)
     else:
         compress_images_in_folder(original_folder_path, output_folder_path, quality)
 
