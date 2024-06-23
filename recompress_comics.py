@@ -49,6 +49,13 @@ class FileUploaderApp:
 
         self.root.bind('<Return>', self.process_file_event)
 
+        self.original_insert = self.message_text.insert
+        self.message_text.insert = self.custom_insert
+
+    def custom_insert(self, index, text):
+        self.original_insert(index, text)
+        self.message_text.see(tk.END)
+
     def upload_files(self):
         self.file_paths = filedialog.askopenfilename(multiple=True)
         if self.file_paths:
