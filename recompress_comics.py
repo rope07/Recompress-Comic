@@ -16,7 +16,7 @@ class FileUploaderApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Comics Recompressor")
-        self.root.geometry("600x400")
+        self.root.geometry("700x400")
 
         self.photo_upload = tk.PhotoImage(file='C:/Users/Pero/Desktop/Python-projekti/Recompress Comics/Icon/upload.png')
         self.photo_upload_resized = self.photo_upload.subsample(12,12)
@@ -33,6 +33,9 @@ class FileUploaderApp:
         self.clear_button = ttk.Button(root, text="Clear Text", command=self.clear_text)
         self.clear_button.place(relx=0.98, rely=1.0, anchor='se', x=-10, y=-10)
 
+        self.terminate_button = ttk.Button(root, text="Terminate Processing", command=self.terminate_processing)
+        self.terminate_button.place(relx=0.20, rely=1.0, anchor='se', x=-10, y=-10)
+
         self.file_path_label = ttk.Label(root, text="No file selected")
         self.file_path_label.pack(pady=10)
 
@@ -46,6 +49,7 @@ class FileUploaderApp:
         self.file_paths = None
         self.lock = threading.Lock()
         self.file_queue = queue.Queue()
+        self.terminate_flag = threading.Event()
 
         self.root.bind('<Return>', self.process_file_event)
 
@@ -64,11 +68,14 @@ class FileUploaderApp:
             self.file_path_label.config(text="No file selected")
 
     def _process_file_thread(self):
-        while not self.file_queue.empty():
+        while not self.file_queue.empty() and not self.terminate_flag.is_set():
             cbr_file_path = self.file_queue.get()
             cbr_file_name = os.path.splitext(os.path.basename(cbr_file_path))[0]
             try:
-                work(cbr_file_path, self.message_text, self.lock)
+                work(cbr_file_path, self.message_text, self.lock, self.terminate_flag)
+                if self.terminate_flag.is_set():
+                    self.message_text.insert(tk.END, f"Processing terminated for {cbr_file_name}.\n")
+                    break
                 self.message_text.insert(tk.END, f"Work completed successfully for {cbr_file_name}.\n")
             except Exception as e:
                 self.message_text.insert(tk.END, f"Error during processing {cbr_file_name}: {str(e)}\n")
@@ -81,6 +88,7 @@ class FileUploaderApp:
 
             self.message_text.insert(tk.END, "Processing files...\n")
             self.root.update()
+            self.terminate_flag.clear()
             process_thread = threading.Thread(target=self._process_file_thread)
             process_thread.start()
         else:
@@ -92,6 +100,13 @@ class FileUploaderApp:
     def clear_text(self):
         self.message_text.delete('1.0', tk.END)
         self.file_path_label.config(text="No folders selected")
+
+    def terminate_processing(self):
+        self.terminate_flag.set()
+        while not self.file_queue.empty():
+            self.file_queue.get()
+            self.file_queue.task_done()
+        self.message_text.insert(tk.END, "Processing terminated.\n")
 
     def upload_and_clear(self):
         self.upload_files()
@@ -205,8 +220,11 @@ def compress_folders_in_directory(directory_path, lock):
             shutil.rmtree(item_path)
             print(f"Deleted folder {item_path}")
 
-def work(cbr_file_path, message_text, lock):
+def work(cbr_file_path, message_text, lock, terminate_flag):
     quality = 50
+
+    if terminate_flag.is_set():
+        return
 
     message_text.insert(tk.END, "Extracting CBR file...\n")
     original_folder_name = extract_cbr_to_folder(cbr_file_path)
@@ -218,6 +236,9 @@ def work(cbr_file_path, message_text, lock):
 
     output_folder_name = original_folder_name.replace('-original', '')
     output_folder_path = os.path.join(os.path.dirname(cbr_file_path), output_folder_name)
+
+    if terminate_flag.is_set():
+        return
 
     message_text.insert(tk.END, "Compressing images...\n")
     
@@ -231,6 +252,9 @@ def work(cbr_file_path, message_text, lock):
     else:
         compress_images_in_folder(original_folder_path, output_folder_path, quality)
 
+    if terminate_flag.is_set():
+        return
+
     original_folder_size_in_bytes = get_folder_size(original_folder_path)
     original_folder_size_in_MB = original_folder_size_in_bytes / (1024*1024)
     output_folder_size_in_bytes = get_folder_size(output_folder_path)
@@ -241,6 +265,9 @@ def work(cbr_file_path, message_text, lock):
     message_text.insert(tk.END, f"Folder size before compressing: {original_folder_size_in_MB:.2f} MB\n")
     message_text.insert(tk.END, f"Folder size after compressing: {output_folder_size_in_MB:.2f} MB\n")
     message_text.insert(tk.END, f"Compressing saved {compress_rate:.2f}% of space\n")
+
+    if terminate_flag.is_set():
+        return
 
     time.sleep(1)
     delete_original_folder(original_folder_path)
@@ -257,4 +284,5 @@ def work(cbr_file_path, message_text, lock):
 if __name__ == "__main__":
     root = tk.Tk()
     app = FileUploaderApp(root)
+    pbar = ttk.Progressbar(root)
     root.mainloop()
