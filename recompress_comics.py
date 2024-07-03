@@ -168,10 +168,11 @@ def compress_images_in_folder(folder_path, output_folder_path, quality):
         if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
             image_path = os.path.join(folder_path, filename)
             output_path = os.path.join(output_folder_path, filename)
-
-            #print(f'Compressing {image_path}...')
             compress_image(image_path, output_path, quality)
-            #print(f'Saved compressed image to {output_path}')
+        else:
+            image_path = os.path.join(folder_path, filename)
+            output_path = os.path.join(output_folder_path, filename)
+            shutil.copy2(image_path, output_path)
 
 def has_subfolder(folder_path):
     for item in os.listdir(folder_path):
@@ -270,8 +271,8 @@ def work(cbr_file_path, message_text, lock, terminate_flag):
         return
 
     time.sleep(1)
-    delete_original_folder(original_folder_path)
 
+    delete_original_folder(original_folder_path)
     delete_cbr_file(cbr_file_path)
 
     message_text.insert(tk.END, "Compressing folder to CBR file...\n")
