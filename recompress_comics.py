@@ -18,10 +18,10 @@ class FileUploaderApp:
         self.root.title("Comics Recompressor")
         self.root.geometry("700x400")
 
-        self.photo_upload = tk.PhotoImage(file='C:/Users/Pero/Desktop/Python-projekti/Recompress Comics/Icon/upload.png')
+        self.photo_upload = tk.PhotoImage(file='F:/Stari PC/C particija/Stari Desktop/Python-projekti/Recompress Comics/Icon/upload.png')
         self.photo_upload_resized = self.photo_upload.subsample(12,12)
 
-        self.photo_processing = tk.PhotoImage(file='C:/Users/Pero/Desktop/Python-projekti/Recompress Comics/Icon/engineering.png')
+        self.photo_processing = tk.PhotoImage(file='F:/Stari PC/C particija/Stari Desktop/Python-projekti/Recompress Comics/Icon/engineering.png')
         self.photo_processing_resized = self.photo_processing.subsample(12,12)
 
         self.upload_button = ttk.Button(root, text="Upload Files", command=self.upload_and_clear, image=self.photo_upload_resized)
